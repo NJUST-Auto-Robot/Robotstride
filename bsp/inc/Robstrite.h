@@ -103,8 +103,8 @@ public:
 	int Can_Motor;
 	Motor_Pos_RobStrite_Info Pos_Info;		//回传值
 	data_read_write drw;      						//电机数据
-	RobStrite_Motor(uint8_t CAN_Id);
-	RobStrite_Motor(float (*Offset_MotoFunc)(float Motor_Tar) , uint8_t CAN_Id);
+    RobStrite_Motor(uint8_t CAN_Id, CAN_HandleTypeDef *hcan);
+    RobStrite_Motor(float (*Offset_MotoFunc)(float Motor_Tar) , uint8_t CAN_Id);
 	void RobStrite_Get_CAN_ID();
 	void Set_RobStrite_Motor_parameter(uint16_t Index, float Value, char Value_mode);
 	void Get_RobStrite_Motor_parameter(uint16_t Index);
@@ -118,7 +118,7 @@ public:
 	void Disenable_Motor( uint8_t clear_error);
 	void Set_CAN_ID(uint8_t Set_CAN_ID);
 	void Set_ZeroPos();
-
+	CAN_HandleTypeDef* _hcan;
 };
 
 

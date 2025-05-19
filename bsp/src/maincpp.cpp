@@ -1,7 +1,7 @@
 #include "maincpp.h"
 #include "Robstrite.h"
 #include "main.h"
-RobStrite_Motor RobStrite_01(0x01);
+RobStrite_Motor RobStrite_01(0x01, &hcan1); // 实例化电机对象
 uint8_t pRxdata[8], pTxdata[8];
 void maincpp()
 {

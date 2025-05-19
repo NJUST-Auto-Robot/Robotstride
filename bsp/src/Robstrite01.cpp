@@ -19,11 +19,12 @@ uint32_t Mailbox; // 定义邮箱变量
 * @返回值 			: void
 * @概述  				: 初始化电机ID。
 *******************************************************************************/
-RobStrite_Motor::RobStrite_Motor(uint8_t CAN_Id)
+RobStrite_Motor::RobStrite_Motor(uint8_t CAN_Id,CAN_HandleTypeDef *hcan)
 {
 	CAN_ID = CAN_Id;	
 	Master_CAN_ID = 0x1F;	
 	Motor_Set_All.set_motor_mode = move_control_mode;
+	_hcan = hcan;
 }
 RobStrite_Motor::RobStrite_Motor(float (*Offset_MotoFunc)(float Motor_Tar) , uint8_t CAN_Id)
 {
@@ -170,7 +171,7 @@ void RobStrite_Motor::RobStrite_Get_CAN_ID()
 	TxMessage.RTR = CAN_RTR_DATA;
 	TxMessage.DLC = 8;
 	TxMessage.ExtId = Communication_Type_Get_ID<<24|Master_CAN_ID <<8|CAN_ID;
-  HAL_CAN_AddTxMessage(&hcan1, &TxMessage, txdata, &Mailbox); // 发送CAN消息
+  HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
 }
 /*******************************************************************************
 * @功能     		: RobStrite电机运控模式  （通信类型1）
@@ -209,7 +210,7 @@ void RobStrite_Motor::RobStrite_Motor_move_control(float Torque, float Angle, fl
 	txdata[5] = float_to_uint(Motor_Set_All.set_Kp,KP_MIN, KP_MAX, 16); 
 	txdata[6] = float_to_uint(Motor_Set_All.set_Kd,KD_MIN, KD_MAX, 16)>>8; 
 	txdata[7] = float_to_uint(Motor_Set_All.set_Kd,KD_MIN, KD_MAX, 16); 
-  HAL_CAN_AddTxMessage(&hcan1, &TxMessage, txdata, &Mailbox); // 发送CAN消息
+  HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
 }
 /*******************************************************************************
 * @功能     		: RobStrite电机位置模式 
@@ -304,7 +305,7 @@ void RobStrite_Motor::Enable_Motor()
 	TxMessage.RTR = CAN_RTR_DATA;
 	TxMessage.DLC = 8;
 	TxMessage.ExtId = Communication_Type_MotorEnable<<24|Master_CAN_ID<<8|CAN_ID;
-  HAL_CAN_AddTxMessage(&hcan1, &TxMessage, txdata, &Mailbox); // 发送CAN消息
+  HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
 }
 /*******************************************************************************
 * @功能     		: RobStrite电机失能 （通信类型4）
@@ -323,7 +324,7 @@ void RobStrite_Motor::Disenable_Motor(uint8_t clear_error)
 	TxMessage.DLC = 8;
 	TxMessage.ExtId = Communication_Type_MotorStop<<24|Master_CAN_ID<<8|CAN_ID;
 	
-  HAL_CAN_AddTxMessage(&hcan1, &TxMessage, txdata, &Mailbox); // 发送CAN消息
+  HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
 }
 /*******************************************************************************
 * @功能     		: RobStrite电机写入参数 （通信类型18）
@@ -357,7 +358,7 @@ void RobStrite_Motor::Set_RobStrite_Motor_parameter(uint16_t Index, float Value,
 		txdata[6] = 0x00;	
 		txdata[7] = 0x00;	
 	}
-  HAL_CAN_AddTxMessage(&hcan1, &TxMessage, txdata, &Mailbox); // 发送CAN消息
+  HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
 }
 /*******************************************************************************
 * @功能     		: RobStrite电机单个参数读取 （通信类型17）
@@ -375,7 +376,7 @@ void RobStrite_Motor::Get_RobStrite_Motor_parameter(uint16_t Index)
 	TxMessage.RTR = CAN_RTR_DATA;
 	TxMessage.DLC = 8;
 	TxMessage.ExtId = Communication_Type_GetSingleParameter<<24|Master_CAN_ID<<8|CAN_ID;
-  HAL_CAN_AddTxMessage(&hcan1, &TxMessage, txdata, &Mailbox); // 发送CAN消息
+  HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
 }
 /*******************************************************************************
 * @功能     		: RobStrite电机设置CAN_ID （通信类型7）
@@ -392,7 +393,7 @@ void RobStrite_Motor::Set_CAN_ID(uint8_t Set_CAN_ID)
 	TxMessage.RTR = CAN_RTR_DATA;
 	TxMessage.DLC = 8;
 	TxMessage.ExtId = Communication_Type_Can_ID<<24|Set_CAN_ID<<16|Master_CAN_ID<<8|CAN_ID;
-  HAL_CAN_AddTxMessage(&hcan1, &TxMessage, txdata, &Mailbox); // 发送CAN消息
+  HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
 }
 /*******************************************************************************
 * @功能     		: RobStrite电机设置机械零点 （通信类型6）
@@ -410,7 +411,7 @@ void RobStrite_Motor::Set_ZeroPos()
 	TxMessage.DLC = 8;
 	TxMessage.ExtId = Communication_Type_SetPosZero<<24|Master_CAN_ID<<8|CAN_ID;
 	txdata[0] = 1;
-  HAL_CAN_AddTxMessage(&hcan1, &TxMessage, txdata, &Mailbox); // 发送CAN消息
+  	HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
 	Enable_Motor();
 }
 
