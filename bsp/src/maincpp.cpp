@@ -1,7 +1,7 @@
 #include "maincpp.h"
 #include "Robstrite.h"
 #include "main.h"
-RobStrite_Motor RobStrite_01(0x01, &hcan1); // 实例化电机对象
+RobStrite_Motor RobStrite_01(0x1, &hcan1); // 实例化电机对象
 uint8_t pRxdata[8], pTxdata[8];
 void Configure_Filter(void) ;
 void maincpp()
@@ -9,22 +9,24 @@ void maincpp()
     // HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
     // HAL_CAN_Start(&hcan1); // 启动CAN
     Configure_Filter(); // 配置过滤器
-    RobStrite_01.RobStrite_Get_CAN_ID(); //获取设备ID，MCU内部绑定，需要使能
+    // RobStrite_01.RobStrite_Get_CAN_ID(); //获取设备ID，MCU内部绑定，需要使能
 
-    RobStrite_01.Set_CAN_ID(0x01);
+    // RobStrite_01.Set_CAN_ID(0x01);
 
-    RobStrite_01.Set_ZeroPos(); 
+    // RobStrite_01.Set_ZeroPos(); 
 
     RobStrite_01.Enable_Motor(); 
+    HAL_Delay(100);
     while (true)
     {
-        float T = 0.1;           
+        float T = 0.5;           
         float Angle = 0.5;       
-        float Speed = 0.1;       
+        float Speed = 0.4;       
         float Pacceleration = 1; 
         float Kp = 0.1;          // Kp
         float Kd = 0.1;          // Kd
         RobStrite_01.RobStrite_Motor_move_control(T, Angle, Speed, Kp, Kd);
+        // RobStrite_01.RobStrite_Motor_Speed_control(3, 0.1,1);
         HAL_Delay(20);
     }
 }
