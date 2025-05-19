@@ -3,10 +3,12 @@
 #include "main.h"
 RobStrite_Motor RobStrite_01(0x01, &hcan1); // 实例化电机对象
 uint8_t pRxdata[8], pTxdata[8];
+void Configure_Filter(void) ;
 void maincpp()
 {
-    HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
-    HAL_CAN_Start(&hcan1); // 启动CAN
+    // HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+    // HAL_CAN_Start(&hcan1); // 启动CAN
+    Configure_Filter(); // 配置过滤器
     RobStrite_01.RobStrite_Get_CAN_ID(); //获取设备ID，MCU内部绑定，需要使能
 
     RobStrite_01.Set_CAN_ID(0x01);
@@ -24,6 +26,36 @@ void maincpp()
         float Kd = 0.1;          // Kd
         RobStrite_01.RobStrite_Motor_move_control(T, Angle, Speed, Kp, Kd);
         HAL_Delay(20);
+    }
+}
+void Configure_Filter(void)
+{
+    CAN_FilterTypeDef sFilterConfig;
+    sFilterConfig.FilterIdHigh = 0x0000;
+    sFilterConfig.FilterIdLow = 0x0000;
+    sFilterConfig.FilterMaskIdHigh = 0x0000;
+    sFilterConfig.FilterMaskIdLow = 0x0000;
+    sFilterConfig.FilterFIFOAssignment = CAN_FILTER_FIFO0; // 把接收到的报文放入到FIFO0
+    sFilterConfig.FilterBank = 0;
+    sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+    sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+    sFilterConfig.FilterActivation = ENABLE;
+    // sFilterConfig.SlaveStartFilterBank = 14;//为从CAN实例选择启动
+    if (HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig) != HAL_OK) // creat CanFilter
+    {
+
+        Error_Handler(); //_Error_Handler(__FILE__, __LINE__);
+    }
+    if (HAL_CAN_Start(&hcan1) != HAL_OK) // initialize can
+    {
+
+        Error_Handler(); //_Error_Handler(__FILE__, __LINE__);
+    }
+    // 当FIFO0中有消息的时候进入中
+    if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK) // The FIFO0 receive interrupt function was enabled
+    {
+
+        Error_Handler(); //_Error_Handler(__FILE__, __LINE__);
     }
 }
 void HAL_CAN_RxFifo0MsgPendingCallback(
