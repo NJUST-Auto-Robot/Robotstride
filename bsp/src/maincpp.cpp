@@ -1,9 +1,43 @@
 #include "maincpp.h"
+#include "Robstrite.h"
+#include "main.h"
+RobStrite_Motor RobStrite_01(0x01);
+uint8_t pRxdata[8], pTxdata[8];
 void maincpp()
 {
-    while (true) 
+    HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+    HAL_CAN_Start(&hcan1); // 启动CAN
+    RobStrite_01.RobStrite_Get_CAN_ID(); //获取设备ID，MCU内部绑定，需要使能
+
+    RobStrite_01.Set_CAN_ID(0x01);
+
+    RobStrite_01.Set_ZeroPos(); 
+
+    RobStrite_01.Enable_Motor(); 
+    while (true)
     {
-    
+        float T = 0.1;           
+        float Angle = 0.5;       
+        float Speed = 0.1;       
+        float Pacceleration = 1; 
+        float Kp = 0.1;          // Kp
+        float Kd = 0.1;          // Kd
+        RobStrite_01.RobStrite_Motor_move_control(T, Angle, Speed, Kp, Kd);
+        HAL_Delay(20);
+    }
+}
+void HAL_CAN_RxFifo0MsgPendingCallback(
+    CAN_HandleTypeDef *hcan) // 中断回调，当我认定的邮箱CAN口对应的邮箱有数据进入，则进入中断
+{
+    UNUSED(hcan);
+    CAN_RxHeaderTypeDef RXHeader;
+    uint8_t RxData[8];
+    if (HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RXHeader, RxData) == HAL_OK)
+    {
+        if (RXHeader.IDE == CAN_ID_EXT)
+        {
+            RobStrite_01.RobStrite_Motor_Analysis(RxData, RXHeader.ExtId);
+        }
     }
 }
 // .............................................'RW#####EEEEEEEEEEEEEEEEEEEEEEEEWW%%%%%%N%%%%%%NW"...........
