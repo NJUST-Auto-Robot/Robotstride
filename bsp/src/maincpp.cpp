@@ -13,14 +13,17 @@ void maincpp()
     // RobStrite_01.Set_ZeroPos();
     // RobStrite_01.Set_ZeroPos(); 
     HAL_Delay(100);
-    RobStrite_01.Enable_Motor(); 
+    // RobStrite_01.Enable_Motor(); 
     HAL_Delay(100);
+    RobStrite_01.Set_RobStrite_Motor_parameter(0X7005, Elect_control_mode, Set_mode);
+    RobStrite_01.Enable_Motor(); // 使能电机
     RobStrite_01.Get_RobStrite_Motor_parameter(0x7005); // 获取电机模式
+    
     while (true)
     {
         RobStrite_01.Get_RobStrite_Motor_parameter(0x7005); // 获取电机模式
         float T = 1;          
-        float Angle = -1;       
+        float Angle = 1;       
         float Speed = 0.8;       
         float Pacceleration = 1; 
         float Kp = 0.5;          // Kp

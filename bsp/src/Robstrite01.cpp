@@ -181,7 +181,7 @@ void RobStrite_Motor::RobStrite_Get_CAN_ID()
 * @参数4        : Kp(0.0~500.0)
 * @参数5        : Kp(0.0~5.0)
 * @返回值 			: void
-* @概述  				: None
+* @概述  				: 需要在关闭模式下切换模式
 *******************************************************************************/
 void RobStrite_Motor::RobStrite_Motor_move_control(float Torque, float Angle, float Speed, float Kp, float Kd)
 {
@@ -217,7 +217,7 @@ void RobStrite_Motor::RobStrite_Motor_move_control(float Torque, float Angle, fl
 * @参数1        : 目标角速度(-30rad/s~30rad/s)
 * @参数2        : 目标角度(-4π~4π)
 * @返回值 			: void
-* @概述  				: None
+* @概述  				: 需要在关闭模式下切换模式
 *******************************************************************************/
 void RobStrite_Motor::RobStrite_Motor_Pos_control(float Speed, float acceleration, float Angle)
 {
@@ -238,7 +238,7 @@ void RobStrite_Motor::RobStrite_Motor_Pos_control(float Speed, float acceleratio
 * @参数1        : 目标角速度(-30rad/s~30rad/s)
 * @参数2        : 目标电流限制(0~23A)
 * @返回值 			: void
-* @概述  				: None
+* @概述  				: 需要在关闭模式下切换模式
 *******************************************************************************/
 // uint8_t count_set_motor_mode_Speed = 0;
 void RobStrite_Motor::RobStrite_Motor_Speed_control(float Speed,float acceleration, float limit_cur)
@@ -259,7 +259,7 @@ void RobStrite_Motor::RobStrite_Motor_Speed_control(float Speed,float accelerati
 * @功能     		: RobStrite电机电流模式
 * @参数         : 目标电流(-23~23A)
 * @返回值 			: void
-* @概述  				: None
+* @概述  				: 需要在关闭模式下切换模式
 *******************************************************************************/
 
 void RobStrite_Motor::RobStrite_Motor_current_control(float current)
@@ -269,7 +269,7 @@ void RobStrite_Motor::RobStrite_Motor_current_control(float current)
     if (Pos_Info.pattern == 2 && drw.run_mode.data != 3)
     {
 		Set_RobStrite_Motor_parameter(0X7005, Elect_control_mode, Set_mode);		//设置电机模式
-		Get_RobStrite_Motor_parameter(0x7005);
+		// Get_RobStrite_Motor_parameter(0x7005);
 		Motor_Set_All.set_motor_mode = Elect_control_mode;
 	}
 	Set_RobStrite_Motor_parameter(0X7006, Motor_Set_All.set_current, Set_parameter);
