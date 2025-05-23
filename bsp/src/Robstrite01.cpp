@@ -240,22 +240,19 @@ void RobStrite_Motor::RobStrite_Motor_Pos_control(float Speed, float acceleratio
 * @返回值 			: void
 * @概述  				: None
 *******************************************************************************/
-uint8_t count_set_motor_mode_Speed = 0;
+// uint8_t count_set_motor_mode_Speed = 0;
 void RobStrite_Motor::RobStrite_Motor_Speed_control(float Speed,float acceleration, float limit_cur)
 {
 	Motor_Set_All.set_speed = Speed;
 	Motor_Set_All.set_limit_cur = limit_cur;
-//	if (Motor_Set_All.set_motor_mode != 2 && Pos_Info.pattern == 2)
-//	{
-//		Set_RobStrite_Motor_parameter(0X7005, Speed_control_mode, Set_mode);		//设置电机模式
-//		//Get_RobStrite_Motor_parameter(0x7005);
-	Motor_Set_All.set_motor_mode = Speed_control_mode;
-//	}
-//	if (count_set_motor_mode_Speed % 2 == 0)
-	Set_RobStrite_Motor_parameter(0X7005, Speed_control_mode, Set_mode);		//设置电机模式
-	count_set_motor_mode_Speed++;
+    if (drw.run_mode.data != 2 && Pos_Info.pattern == 2)
+    {
+		Set_RobStrite_Motor_parameter(0X7005, Speed_control_mode, Set_mode);		//设置电机模式
+		Get_RobStrite_Motor_parameter(0x7005);
+		Motor_Set_All.set_motor_mode = Speed_control_mode;
+	}
 	Set_RobStrite_Motor_parameter(0X7018, Motor_Set_All.set_limit_cur, Set_parameter);
-  Set_RobStrite_Motor_parameter(0X7022, Motor_Set_All.set_acceleration, Set_parameter);	
+  	Set_RobStrite_Motor_parameter(0X7022, Motor_Set_All.set_acceleration, Set_parameter);	
 	Set_RobStrite_Motor_parameter(0X700A, Motor_Set_All.set_speed, Set_parameter);
 }
 /*******************************************************************************
@@ -264,20 +261,17 @@ void RobStrite_Motor::RobStrite_Motor_Speed_control(float Speed,float accelerati
 * @返回值 			: void
 * @概述  				: None
 *******************************************************************************/
-uint8_t count_set_motor_mode = 0;
+
 void RobStrite_Motor::RobStrite_Motor_current_control(float current)
 {
 	Motor_Set_All.set_current = current;
 	output = Motor_Set_All.set_current;
-	if (Pos_Info.pattern == 2 && Motor_Set_All.set_motor_mode != 3)
-	{
+    if (Pos_Info.pattern == 2 && drw.run_mode.data != 3)
+    {
 		Set_RobStrite_Motor_parameter(0X7005, Elect_control_mode, Set_mode);		//设置电机模式
-		//Get_RobStrite_Motor_parameter(0x7005);
+		Get_RobStrite_Motor_parameter(0x7005);
 		Motor_Set_All.set_motor_mode = Elect_control_mode;
 	}
-	if (count_set_motor_mode % 50 == 0)
-		Set_RobStrite_Motor_parameter(0X7005, Elect_control_mode, Set_mode);		//设置电机模式
-	count_set_motor_mode++;
 	Set_RobStrite_Motor_parameter(0X7006, Motor_Set_All.set_current, Set_parameter);
 }
 /*******************************************************************************
@@ -305,7 +299,7 @@ void RobStrite_Motor::Enable_Motor()
 	TxMessage.RTR = CAN_RTR_DATA;
 	TxMessage.DLC = 8;
 	TxMessage.ExtId = Communication_Type_MotorEnable<<24|Master_CAN_ID<<8|CAN_ID;
-  HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
+ 	HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
 }
 /*******************************************************************************
 * @功能     		: RobStrite电机失能 （通信类型4）
@@ -324,7 +318,7 @@ void RobStrite_Motor::Disenable_Motor(uint8_t clear_error)
 	TxMessage.DLC = 8;
 	TxMessage.ExtId = Communication_Type_MotorStop<<24|Master_CAN_ID<<8|CAN_ID;
 	
-  HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
+  	HAL_CAN_AddTxMessage(_hcan, &TxMessage, txdata, &Mailbox); // 发送CAN消息
 }
 /*******************************************************************************
 * @功能     		: RobStrite电机写入参数 （通信类型18）
