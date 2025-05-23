@@ -121,6 +121,7 @@ public:
 	void SetCurrentMode(uint8_t mode); 
 	CAN_HandleTypeDef* _hcan;
 	std::function<void(void* header,uint8_t* data)>_can_tx_register;
+	std::function<void(uint32_t delay)>_delay;
 };
 
 
