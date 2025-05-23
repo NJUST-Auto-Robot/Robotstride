@@ -12,7 +12,7 @@
 
 #include "main.h"
 #include "can.h"
- 
+#include <functional>
  #define Set_mode 		 'j'				//设置控制模式
  #define Set_parameter 'p'				//设置参数
  //各种控制模式
@@ -118,7 +118,9 @@ public:
 	void Disenable_Motor( uint8_t clear_error);
 	void Set_CAN_ID(uint8_t Set_CAN_ID);
 	void Set_ZeroPos();
+	void SetCurrentMode(uint8_t mode); 
 	CAN_HandleTypeDef* _hcan;
+	std::function<void(void* header,uint8_t* data)>_can_tx_register;
 };
 
 

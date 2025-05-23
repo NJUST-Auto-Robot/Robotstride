@@ -21,7 +21,7 @@ void maincpp()
     
     while (true)
     {
-        RobStrite_01.Get_RobStrite_Motor_parameter(0x7005); // 获取电机模式
+        // RobStrite_01.Get_RobStrite_Motor_parameter(0x7005); // 获取电机模式
         float T = 1;          
         float Angle = 1;       
         float Speed = 0.8;       
