@@ -437,6 +437,7 @@ void RobStrite_Motor::SetCurrentMode(uint8_t mode)
         Get_RobStrite_Motor_parameter(0x7005);
 		_delay(20);
         Enable_Motor(); // 使能电机
+		_delay(10);
         Motor_Set_All.set_motor_mode = Speed_control_mode;
         
     }
