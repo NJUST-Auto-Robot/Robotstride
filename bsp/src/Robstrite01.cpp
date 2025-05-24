@@ -257,6 +257,7 @@ void RobStrite_Motor::RobStrite_Motor_Speed_control(float Speed,float accelerati
 {
 	Motor_Set_All.set_speed = Speed;
 	Motor_Set_All.set_limit_cur = limit_cur;
+	Motor_Set_All.set_acceleration = acceleration;
     // if (drw.run_mode.data != 2 && Pos_Info.pattern == 2)
     // {
 	// 	Set_RobStrite_Motor_parameter(0X7005, Speed_control_mode, Set_mode);		//设置电机模式
