@@ -18,6 +18,8 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-2")
 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -gdwarf-2")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g")
 
+# 启动浮点数打印支持
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u _printf_float")
 file(GLOB MY_SRC 
     ${CMAKE_CURRENT_SOURCE_DIR}/bsp/src/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/bsp/src/*.cpp)
